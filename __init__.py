@@ -13,19 +13,16 @@ def index():
 
 @app.route("/verify/<path:url>")
 def verify(url):
-  if url.startswith('https'):
-    url = 'https://' + url[7:]
-  elif url.startswith('http'):
-    url = 'http://' + url[6:]
-  else:
+  url = _parse_url(url)
+  if url is None:
     return 'False'
-  return url
-  # return str(accepts_range(url))
+  else:
+    return str(accepts_range(url))
 
 @app.route("/partition/<path:url>/<int:n>")
 def partition(url, n):
-  url = 'http://' + url[6:]
-  if accepts_range(url):
+  url = _parse_url
+  if url is not None and accepts_range(url):
     size = get_file_size(url)
     resp = {
       '_id': names.get_full_name().replace(' ', ''),
@@ -53,6 +50,14 @@ def partition(url, n):
     return jsonify(**resp)
   else:
     return jsonify(**{'error': 'URL not valid'}) 
+
+def _parse_url(url):
+  if url.startswith('https'):
+    url = 'https://' + url[7:]
+  elif url.startswith('http'):
+    url = 'http://' + url[6:]
+  else:
+    return None
 
 def _stringify(i, j):
   return 'bytes=' + i + '-' + j
