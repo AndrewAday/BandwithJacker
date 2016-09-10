@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from constants import *
 from flask import Flask, jsonify
 import names
@@ -21,13 +22,15 @@ def verify(url):
 
 @app.route("/partition/<path:url>/<int:n>")
 def partition(url, n):
-  url = _parse_url
+  url = _parse_url(url)
   if url is not None and accepts_range(url):
     size = get_file_size(url)
     resp = {
       '_id': names.get_full_name().replace(' ', ''),
       'ranges': [],
-      'size': size
+      'size': size,
+      'url': url,
+      'filename': url[url.rfind('/')+1:]
     }
     if size < n:
       for i in xrange(0, size+1, 2):
@@ -58,6 +61,7 @@ def _parse_url(url):
     url = 'http://' + url[6:]
   else:
     return None
+  return url
 
 def _stringify(i, j):
   return 'bytes=' + i + '-' + j
@@ -91,4 +95,4 @@ def fallback_check(url): # actually construct a HEAD request and check for 206
     return False
 
 if __name__ == "__main__":
-  app.run()
+  app.run(host='0.0.0.0')
