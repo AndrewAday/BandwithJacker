@@ -37,7 +37,7 @@ def partition(url, n):
       stop = -1
       for i in xrange(n):
         start = stop + 1
-        stop += step_size - 1
+        stop += step_size
         if (i == n-1):
           resp['ranges'].append(_stringify(str(start), ''))
         else:
