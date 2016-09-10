@@ -13,11 +13,18 @@ def index():
 
 @app.route("/verify/<path:url>")
 def verify(url):
-  return 'http://' + url[6:]
+  if url.startswith('https'):
+    url = 'https://' + url[7:]
+  elif url.startswith('http'):
+    url = 'http://' + url[6:]
+  else:
+    return 'False'
+  return url
   # return str(accepts_range(url))
 
 @app.route("/partition/<path:url>/<int:n>")
 def partition(url, n):
+  url = 'http://' + url[6:]
   if accepts_range(url):
     size = get_file_size(url)
     resp = {
